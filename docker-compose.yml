@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    links:
+      - node-server
+      - vue-client
+    ports:
+      - 80:80
+      - 443:443
+    # volumes:
+    #   - ./client/dist:/usr/share/nginx/html
+
+  vue-client:
+    build: ./client
+    container_name: vue-client
+    ports:
+      - 8080:8080
+      - 8000:8000  # only needed if using vue-cli UI
+    volumes:
+      - ./client:/app
+    command: "npm run serve"
+
+  node-server:
+    build: ./server
+    container_name: node-server
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    ports:
+      - 3000:3000
+    volumes:
+      - ./server:/app
+    command: "npm run start"
